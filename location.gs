@@ -69,22 +69,22 @@ function updatePlaceLocations(sheetName, firstRow, firstColumn) {
  *  Get indices for each header column
  **/
 function getHeaderIdxs(sheet, firstRow, firstColumn) {
-  firstRow = firstRow > 0 ? firstRow : 1
-  firstColumn = firstColumn > 0 ? firstColumn : 1
+  firstRow = firstRow > 1 ? firstRow : 1
+  firstColumn = firstColumn > 1 ? firstColumn : 1
+
   // Get header values
   const header = sheet
                    .getRange(firstRow, firstColumn, 1, sheet.getLastColumn())
                    .getValues()[0]
 
-  // Store header indices in results object
-  const result = header.reduce(function(idxs, title, idx) {
+  // Return header title indices in object
+  return header.reduce(function(idxs, title, idx) {
     if (title !== '' && idxs[title.toLowerCase()] === undefined) {
       idxs[title.toLowerCase()] = idx
     }
     return idxs
   },{})
 
-  return result
 }
 
 
@@ -96,14 +96,13 @@ function getLocation(query) {
   if (query.trim() !== '') {
   
     // Build request URL
-    const scriptProps = PropertiesService.getScriptProperties()
-    const props = scriptProps.getProperties()
-    const requestUrl = props.googlePlacesUrl +
-                       '?query='+encodeURIComponent(query) +
-                       '&key='+props.googlePlacesApiKey
+    const props = PropertiesService.getScriptProperties().getProperties()
+    const url = props.googlePlacesUrl +
+                       '?query=' + encodeURIComponent(query) +
+                       '&key=' + props.googlePlacesApiKey
       
     // Make API call
-    const response = UrlFetchApp.fetch(requestUrl)
+    const response = UrlFetchApp.fetch(url)
 
     if (response.getResponseCode() === 200) {
       
